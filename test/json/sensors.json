@@ -1,0 +1,47 @@
+[
+  {
+    "label": "Tctl",
+    "value": 61,
+    "warning": null,
+    "critical": null,
+    "unit": "C",
+    "type": "temperature_core",
+    "key": "label"
+  },
+  {
+    "label": "Tdie",
+    "value": 34,
+    "warning": null,
+    "critical": null,
+    "unit": "C",
+    "type": "temperature_core",
+    "key": "label"
+  },
+  {
+    "label": "Tccd1",
+    "value": 57,
+    "warning": null,
+    "critical": null,
+    "unit": "C",
+    "type": "temperature_core",
+    "key": "label"
+  },
+  {
+    "label": "Tctl",
+    "value": 66,
+    "warning": null,
+    "critical": null,
+    "unit": "C",
+    "type": "temperature_core",
+    "key": "label"
+  },
+  {
+    "label": "Tdie",
+    "value": 39,
+    "warning": null,
+    "critical": null,
+    "unit": "C",
+    "type": "temperature_core",
+    "key": "label"
+  }
+]

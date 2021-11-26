@@ -1,0 +1,362 @@
+[
+  {
+    "device_name": "/dev/sdb5",
+    "fs_type": "ext4",
+    "mnt_point": "/",
+    "size": 490651459584,
+    "used": 430942031872,
+    "free": 34714259456,
+    "percent": 92.5,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop0",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/bare/5",
+    "size": 131072,
+    "used": 131072,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop1",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/blender/1113",
+    "size": 205520896,
+    "used": 205520896,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop3",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/canonical-livepatch/119",
+    "size": 9568256,
+    "used": 9568256,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop2",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/blender/830",
+    "size": 205520896,
+    "used": 205520896,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop5",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/core20/1242",
+    "size": 64880640,
+    "used": 64880640,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop7",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/exercism/5",
+    "size": 3538944,
+    "used": 3538944,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop6",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/flutter/111",
+    "size": 209584128,
+    "used": 209584128,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop8",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/gnome-3-28-1804/145",
+    "size": 170786816,
+    "used": 170786816,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop9",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/gnome-3-28-1804/161",
+    "size": 172883968,
+    "used": 172883968,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop10",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/code-insiders/870",
+    "size": 227540992,
+    "used": 227540992,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop11",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/gnome-3-34-1804/72",
+    "size": 229638144,
+    "used": 229638144,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop12",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/flutter/109",
+    "size": 209584128,
+    "used": 209584128,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop13",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/gtk-common-themes/1515",
+    "size": 68288512,
+    "used": 68288512,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop14",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/core/11993",
+    "size": 104333312,
+    "used": 104333312,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop15",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/canonical-livepatch/126",
+    "size": 9568256,
+    "used": 9568256,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop16",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/kde-frameworks-5-qt-5-15-3-core20/8",
+    "size": 444858368,
+    "used": 444858368,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop17",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/kde-frameworks-5-qt-5-14-core18/4",
+    "size": 304742400,
+    "used": 304742400,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop19",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/kde-frameworks-5-qt-5-15-3-core20/5",
+    "size": 334495744,
+    "used": 334495744,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop20",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/core18/2253",
+    "size": 58195968,
+    "used": 58195968,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop21",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/snapd/13640",
+    "size": 34078720,
+    "used": 34078720,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop22",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/kigo/49",
+    "size": 6815744,
+    "used": 6815744,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop23",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/snapd/13831",
+    "size": 44302336,
+    "used": 44302336,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop24",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/core18/2246",
+    "size": 58195968,
+    "used": 58195968,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop25",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/kde-frameworks-5-qt-5-15-core20/14",
+    "size": 339345408,
+    "used": 339345408,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop26",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/gtk-common-themes/1519",
+    "size": 68419584,
+    "used": 68419584,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop27",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/mdbook/2",
+    "size": 2883584,
+    "used": 2883584,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop28",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/snap-store/547",
+    "size": 53477376,
+    "used": 53477376,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop29",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/core/11743",
+    "size": 104202240,
+    "used": 104202240,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop31",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/core20/1169",
+    "size": 64880640,
+    "used": 64880640,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop32",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/kigo/54",
+    "size": 1966080,
+    "used": 1966080,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop33",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/gnome-3-34-1804/77",
+    "size": 229638144,
+    "used": 229638144,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop18",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/code-insiders/871",
+    "size": 227672064,
+    "used": 227672064,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop34",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/snap-store/558",
+    "size": 56885248,
+    "used": 56885248,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop4",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/gnome-3-38-2004/87",
+    "size": 260046848,
+    "used": 260046848,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  },
+  {
+    "device_name": "/dev/loop30",
+    "fs_type": "squashfs",
+    "mnt_point": "/snap/postman/149",
+    "size": 176422912,
+    "used": 176422912,
+    "free": 0,
+    "percent": 100.0,
+    "key": "mnt_point"
+  }
+]

@@ -1,0 +1,75 @@
+{
+  "$": "ProcessCountHistory",
+  "total": [
+    {
+      "timeStamp": 1637725438425018,
+      "value": 594
+    },
+    {
+      "timeStamp": 1637725551916802,
+      "value": 601
+    },
+    {
+      "timeStamp": 1637725618519076,
+      "value": 601
+    },
+    {
+      "timeStamp": 1637725668514818,
+      "value": 599
+    }
+  ],
+  "running": [
+    {
+      "timeStamp": 1637725438425025,
+      "value": 1
+    },
+    {
+      "timeStamp": 1637725551916812,
+      "value": 1
+    },
+    {
+      "timeStamp": 1637725618519085,
+      "value": 2
+    },
+    {
+      "timeStamp": 1637725668514826,
+      "value": 2
+    }
+  ],
+  "sleeping": [
+    {
+      "timeStamp": 1637725438425029,
+      "value": 417
+    },
+    {
+      "timeStamp": 1637725551916815,
+      "value": 427
+    },
+    {
+      "timeStamp": 1637725618519088,
+      "value": 426
+    },
+    {
+      "timeStamp": 1637725668514830,
+      "value": 426
+    }
+  ],
+  "thread": [
+    {
+      "timeStamp": 1637725438425032,
+      "value": 1757
+    },
+    {
+      "timeStamp": 1637725551916818,
+      "value": 1922
+    },
+    {
+      "timeStamp": 1637725618519091,
+      "value": 1928
+    },
+    {
+      "timeStamp": 1637725668514832,
+      "value": 1936
+    }
+  ]
+}

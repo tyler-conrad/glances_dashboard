@@ -1,0 +1,44 @@
+[
+  {
+    "interface_name": "lo",
+    "alias": null,
+    "time_since_update": 32.375821352005005,
+    "cumulative_rx": 29743371954,
+    "rx": 25622,
+    "cumulative_tx": 29743371954,
+    "tx": 25622,
+    "cumulative_cx": 59486743908,
+    "cx": 51244,
+    "is_up": true,
+    "speed": 0,
+    "key": "interface_name"
+  },
+  {
+    "interface_name": "enp4s0",
+    "alias": null,
+    "time_since_update": 32.375821352005005,
+    "cumulative_rx": 938220099,
+    "rx": 4986,
+    "cumulative_tx": 56509473,
+    "tx": 4136,
+    "cumulative_cx": 994729572,
+    "cx": 9122,
+    "is_up": true,
+    "speed": 1048576000,
+    "key": "interface_name"
+  },
+  {
+    "interface_name": "enp6s0",
+    "alias": null,
+    "time_since_update": 32.375821352005005,
+    "cumulative_rx": 0,
+    "rx": 0,
+    "cumulative_tx": 0,
+    "tx": 0,
+    "cumulative_cx": 0,
+    "cx": 0,
+    "is_up": false,
+    "speed": 68718428160,
+    "key": "interface_name"
+  }
+]

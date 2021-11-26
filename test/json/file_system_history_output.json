@@ -1,0 +1,95 @@
+{
+  "$": "FileSystemHistory",
+  "history": {
+    "/_percent": [
+      {
+        "timeStamp": 1637725438213665,
+        "value": 92.5
+      },
+      {
+        "timeStamp": 1637725551766775,
+        "value": 92.5
+      },
+      {
+        "timeStamp": 1637725618367170,
+        "value": 92.5
+      },
+      {
+        "timeStamp": 1637725668391700,
+        "value": 92.5
+      }
+    ],
+    "/snap/bare/5_percent": [
+      {
+        "timeStamp": 1637725438213668,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725551766779,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725618367175,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725668391704,
+        "value": 100.0
+      }
+    ],
+    "/snap/blender/1113_percent": [
+      {
+        "timeStamp": 1637725438213671,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725551766781,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725618367179,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725668391708,
+        "value": 100.0
+      }
+    ],
+    "/snap/canonical-livepatch/119_percent": [
+      {
+        "timeStamp": 1637725438213674,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725551766783,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725618367183,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725668391712,
+        "value": 100.0
+      }
+    ],
+    "/snap/blender/830_percent": [
+      {
+        "timeStamp": 1637725438213676,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725551766785,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725618367186,
+        "value": 100.0
+      },
+      {
+        "timeStamp": 1637725668391714,
+        "value": 100.0
+      }
+    ]
+  }
+}

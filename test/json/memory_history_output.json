@@ -1,0 +1,33 @@
+{
+  "$": "MemoryHistory",
+  "percent": [
+    {
+      "timeStamp": 1637725438209863,
+      "value": 39.3
+    },
+    {
+      "timeStamp": 1637725551743488,
+      "value": 41.4
+    },
+    {
+      "timeStamp": 1637725618349103,
+      "value": 41.3
+    },
+    {
+      "timeStamp": 1637725668371071,
+      "value": 41.7
+    },
+    {
+      "timeStamp": 1637725714956114,
+      "value": 41.5
+    },
+    {
+      "timeStamp": 1637725763136865,
+      "value": 41.3
+    },
+    {
+      "timeStamp": 1637725806717393,
+      "value": 40.6
+    }
+  ]
+}

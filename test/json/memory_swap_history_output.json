@@ -1,0 +1,37 @@
+{
+  "$": "MemorySwapHistory",
+  "percent": [
+    {
+      "timeStamp": 1637725438425240,
+      "value": 44.0
+    },
+    {
+      "timeStamp": 1637725551917080,
+      "value": 44.0
+    },
+    {
+      "timeStamp": 1637725618519329,
+      "value": 44.0
+    },
+    {
+      "timeStamp": 1637725668515059,
+      "value": 44.0
+    },
+    {
+      "timeStamp": 1637725715118324,
+      "value": 44.0
+    },
+    {
+      "timeStamp": 1637725763279272,
+      "value": 44.0
+    },
+    {
+      "timeStamp": 1637725806887778,
+      "value": 44.0
+    },
+    {
+      "timeStamp": 1637725871252004,
+      "value": 44.0
+    }
+  ]
+}
