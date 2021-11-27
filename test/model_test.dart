@@ -1,8 +1,8 @@
 import 'dart:convert' as convert;
 import 'dart:io' as io;
 
-import 'package:glances_dashboard/model.dart' as model;
-import 'package:glances_dashboard/serializers.dart' as s;
+import 'package:glances_dashboard/src/model.dart' as model;
+import 'package:glances_dashboard/src/serializers.dart' as s;
 import 'package:test/test.dart' as t;
 
 List<dynamic> decodeJsonListFromString({required String string}) {
