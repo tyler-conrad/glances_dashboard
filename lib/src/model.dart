@@ -110,11 +110,11 @@ class Now extends eq.Equatable {
 }
 
 class UpTime extends eq.Equatable {
-  final String now;
+  final String upTime;
 
   @override
   List<Object> get props => [
-        now,
+        upTime,
       ];
 
   @override
@@ -124,7 +124,7 @@ class UpTime extends eq.Equatable {
     required String quoted,
   }) {
     return UpTime(
-      now: quoted.replaceAll(
+      upTime: quoted.replaceAll(
         '"',
         '',
       ),
@@ -132,7 +132,7 @@ class UpTime extends eq.Equatable {
   }
 
   const UpTime({
-    required this.now,
+    required this.upTime,
   });
 }
 

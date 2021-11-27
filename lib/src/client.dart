@@ -23,16 +23,11 @@ Map<String, dynamic> decodeJsonMapFromResp({required http.Response resp}) {
 }
 
 class Client {
-  static const String scheme = 'http';
-  static const String host = 'localhost';
-  static const int port = 61208;
-  static const String basePath = '/api/3';
-
   final retry.RetryClient client = retry.RetryClient(http.Client());
 
   Future<http.Response> get({required String path}) async {
     return await client.get(
-        Uri(scheme: scheme, host: host, port: port, path: basePath + path));
+        Uri(scheme: 'http', host: 'localhost', port: 61208, path: '/api/3' + path));
   }
 
   Stream<T> poll<T>(
@@ -48,7 +43,7 @@ class Client {
 
   Future<md.Now> now() async {
     var resp = await get(path: '/now');
-    return md.Now(now: resp.body);
+    return md.Now.fromQuoted(quoted: resp.body);
   }
 
   Stream<md.Now> nowStream() {
@@ -60,7 +55,7 @@ class Client {
 
   Future<md.UpTime> upTime() async {
     var resp = await get(path: '/uptime');
-    return md.UpTime(now: resp.body);
+    return md.UpTime.fromQuoted(quoted: resp.body);
   }
 
   Stream<md.UpTime> upTimeStream() {
@@ -453,3 +448,5 @@ class Client {
     )!;
   }
 }
+
+final Client client = Client();

@@ -1138,7 +1138,7 @@ void main() {
         () async {
           var string = await io.File('test/json/up_time.json').readAsString();
           t.expect(
-              !model.UpTime.fromQuoted(quoted: string).now.contains(
+              !model.UpTime.fromQuoted(quoted: string).upTime.contains(
                     '"',
                   ),
               t.isTrue);

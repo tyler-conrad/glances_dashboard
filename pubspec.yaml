@@ -40,6 +40,7 @@ dependencies:
   http: ^0.13.4
   equatable: ^2.0.3
   http_retry: ^0.2.0
+  yaru: ^0.2.0
 
 dev_dependencies:
   flutter_test:
