@@ -1,425 +1,425 @@
-import 'package:test/test.dart' as t;
+import 'package:test/test.dart' as test;
 
-import 'package:glances_dashboard/src/model.dart' as md;
-import 'package:glances_dashboard/src/client.dart' as c;
+import 'package:glances_dashboard/src/model.dart' as model;
+import 'package:glances_dashboard/src/client.dart' as glances_client;
 
 void main() {
-  final c.Client client = c.Client();
+  final client = glances_client.Client();
 
-  t.group(
+  test.group(
     'now()',
     () {
-      t.test(
+      test.test(
         'returns a Now object',
         () async {
-          t.expect(
+          test.expect(
             await client.now(),
-            t.isA<md.Now>(),
+            test.isA<model.Now>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'upTime()',
     () {
-      t.test(
+      test.test(
         'returns a UpTime object',
         () async {
-          t.expect(
+          test.expect(
             await client.upTime(),
-            t.isA<md.UpTime>(),
+            test.isA<model.UpTime>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'pluginsList()',
     () {
-      t.test(
+      test.test(
         'returns a PluginsList object',
         () async {
-          t.expect(
+          test.expect(
             await client.pluginsList(),
-            t.isA<md.PluginsList>(),
+            test.isA<model.PluginList>(),
           );
         },
       );
     },
   );
 
-  t.group(
-    'core()',
+  test.group(
+    'cores()',
     () {
-      t.test(
-        'returns a Core object',
+      test.test(
+        'returns a Cores object',
         () async {
-          t.expect(
-            await client.core(),
-            t.isA<md.Core>(),
+          test.expect(
+            await client.cores(),
+            test.isA<model.Cores>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'cpu()',
     () {
-      t.test(
+      test.test(
         'returns a Cpu object',
         () async {
-          t.expect(
+          test.expect(
             await client.cpu(),
-            t.isA<md.Cpu>(),
+            test.isA<model.TimeStamp<model.Cpu>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'cpuHistory()',
     () {
-      t.test(
+      test.test(
         'returns a CpuHistory object',
         () async {
-          t.expect(
+          test.expect(
             await client.cpuHistory(),
-            t.isA<md.CpuHistory>(),
+            test.isA<model.CpuHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
-    'perCpu()',
+  test.group(
+    'allCpus()',
     () {
-      t.test(
-        'returns a PerCpuList object',
+      test.test(
+        'returns a AllCpusList object',
         () async {
-          t.expect(
-            await client.perCpu(),
-            t.isA<md.PerCpuList>(),
+          test.expect(
+            await client.allCpus(),
+            test.isA<model.TimeStamp<model.AllCpusList>>(),
           );
         },
       );
     },
   );
 
-  t.group(
-    'perCpuHistory()',
+  test.group(
+    'allCpusHistory()',
     () {
-      t.test(
-        'returns a PerCpuHistory object',
+      test.test(
+        'returns a AllCpusHistory object',
         () async {
-          t.expect(
-            await client.perCpuHistory(),
-            t.isA<md.PerCpuHistory>(),
+          test.expect(
+            await client.allCpusHistory(),
+            test.isA<model.AllCpusHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'cpuLoad()',
-        () {
-      t.test(
+    () {
+      test.test(
         'returns a CpuLoad object',
-            () async {
-          t.expect(
+        () async {
+          test.expect(
             await client.cpuLoad(),
-            t.isA<md.CpuLoad>(),
+            test.isA<model.TimeStamp<model.CpuLoad>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'cpuLoadHistory()',
-        () {
-      t.test(
+    () {
+      test.test(
         'returns a CpuLoadHistory object',
-            () async {
-          t.expect(
+        () async {
+          test.expect(
             await client.cpuLoadHistory(),
-            t.isA<md.CpuLoadHistory>(),
+            test.isA<model.CpuLoadHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'diskIo()',
     () {
-      t.test(
+      test.test(
         'returns a DiskIoList object',
         () async {
-          t.expect(
+          test.expect(
             await client.diskIo(),
-            t.isA<md.DiskIoList>(),
+            test.isA<model.TimeStamp<model.DiskIoList>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'diskIoHistory()',
     () {
-      t.test(
+      test.test(
         'returns a DiskIoHistory object',
         () async {
-          t.expect(
+          test.expect(
             await client.diskIoHistory(),
-            t.isA<md.DiskIoHistory>(),
+            test.isA<model.DiskIoHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'fileSystem()',
     () {
-      t.test(
+      test.test(
         'returns a FileSystemList object',
         () async {
-          t.expect(
+          test.expect(
             await client.fileSystem(),
-            t.isA<md.FileSystemList>(),
+            test.isA<model.TimeStamp<model.FileSystemList>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'fileSystemHistory()',
     () {
-      t.test(
+      test.test(
         'returns a FileSystemHistory object',
         () async {
-          t.expect(
+          test.expect(
             await client.fileSystemHistory(),
-            t.isA<md.FileSystemHistory>(),
+            test.isA<model.FileSystemHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'internetProtocol()',
     () {
-      t.test(
+      test.test(
         'returns a InternetProtocol object',
         () async {
-          t.expect(
+          test.expect(
             await client.internetProtocol(),
-            t.isA<md.InternetProtocol>(),
+            test.isA<model.InternetProtocol>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'memory()',
     () {
-      t.test(
+      test.test(
         'returns a Memory object',
         () async {
-          t.expect(
+          test.expect(
             await client.memory(),
-            t.isA<md.Memory>(),
+            test.isA<model.TimeStamp<model.Memory>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'memoryHistory()',
     () {
-      t.test(
+      test.test(
         'returns a MemoryHistory object',
         () async {
-          t.expect(
+          test.expect(
             await client.memoryHistory(),
-            t.isA<md.MemoryHistory>(),
+            test.isA<model.MemoryHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'memorySwap()',
     () {
-      t.test(
+      test.test(
         'returns a MemorySwap object',
         () async {
-          t.expect(
+          test.expect(
             await client.memorySwap(),
-            t.isA<md.MemorySwap>(),
+            test.isA<model.TimeStamp<model.MemorySwap>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'memorySwapHistory()',
     () {
-      t.test(
+      test.test(
         'returns a MemorySwapHistory object',
         () async {
-          t.expect(
+          test.expect(
             await client.memorySwapHistory(),
-            t.isA<md.MemorySwapHistory>(),
+            test.isA<model.MemorySwapHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'networkInterface()',
     () {
-      t.test(
+      test.test(
         'returns a NetworkInterfaceList object',
         () async {
-          t.expect(
+          test.expect(
             await client.networkInterface(),
-            t.isA<md.NetworkInterfaceList>(),
+            test.isA<model.TimeStamp<model.NetworkInterfaceList>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'networkHistory()',
     () {
-      t.test(
+      test.test(
         'returns a NetworkHistory object',
         () async {
-          t.expect(
+          test.expect(
             await client.networkHistory(),
-            t.isA<md.NetworkHistory>(),
+            test.isA<model.NetworkHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'processCount()',
     () {
-      t.test(
+      test.test(
         'returns a ProcessCount object',
         () async {
-          t.expect(
+          test.expect(
             await client.processCount(),
-            t.isA<md.ProcessCount>(),
+            test.isA<model.TimeStamp<model.ProcessCount>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'processCountHistory()',
     () {
-      t.test(
+      test.test(
         'returns a ProcessCountHistory object',
         () async {
-          t.expect(
+          test.expect(
             await client.processCountHistory(),
-            t.isA<md.ProcessCountHistory>(),
+            test.isA<model.ProcessCountHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'processList()',
     () {
-      t.test(
+      test.test(
         'returns a ProcessList object',
         () async {
-          t.expect(
+          test.expect(
             await client.processList(),
-            t.isA<md.ProcessList>(),
+            test.isA<model.TimeStamp<model.ProcessList>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'quickLook()',
     () {
-      t.test(
+      test.test(
         'returns a QuickLook object',
         () async {
-          t.expect(
+          test.expect(
             await client.quickLook(),
-            t.isA<md.QuickLook>(),
+            test.isA<model.TimeStamp<model.QuickLook>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'quickLookHistory()',
     () {
-      t.test(
+      test.test(
         'returns a QuickLookHistory object',
         () async {
-          t.expect(
+          test.expect(
             await client.quickLookHistory(),
-            t.isA<md.QuickLookHistory>(),
+            test.isA<model.QuickLookHistory>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'sensors()',
     () {
-      t.test(
+      test.test(
         'returns a SensorList object',
         () async {
-          t.expect(
+          test.expect(
             await client.sensors(),
-            t.isA<md.SensorList>(),
+            test.isA<model.TimeStamp<model.SensorList>>(),
           );
         },
       );
     },
   );
 
-  t.group(
+  test.group(
     'system()',
     () {
-      t.test(
+      test.test(
         'returns a System object',
         () async {
-          t.expect(
+          test.expect(
             await client.system(),
-            t.isA<md.System>(),
+            test.isA<model.System>(),
           );
         },
       );

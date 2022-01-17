@@ -184,6 +184,190 @@
         "timeStamp": 1637725668369353,
         "value": 0
       }
+    ],
+    "loop0_write_bytes": [
+      {
+        "timeStamp": 1637725438209057,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742027,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347502,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725668369303,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725714954579,
+        "value": 0
+      }
+    ],
+    "loop1_write_bytes": [
+      {
+        "timeStamp": 1637725438209063,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742039,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347515,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725668369316,
+        "value": 0
+      }
+    ],
+    "loop2_write_bytes": [
+      {
+        "timeStamp": 1637725438209066,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742044,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347521,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725668369322,
+        "value": 0
+      }
+    ],
+    "loop3_write_bytes": [
+      {
+        "timeStamp": 1637725438209069,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742048,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347525,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725668369327,
+        "value": 0
+      }
+    ],
+    "loop4_write_bytes": [
+      {
+        "timeStamp": 1637725438209071,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742052,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347530,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725668369332,
+        "value": 0
+      }
+    ],
+    "loop5_write_bytes": [
+      {
+        "timeStamp": 1637725438209074,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742055,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347534,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725668369337,
+        "value": 0
+      }
+    ],
+    "loop6_write_bytes": [
+      {
+        "timeStamp": 1637725438209076,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742059,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347538,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725668369342,
+        "value": 0
+      }
+    ],
+    "loop7_write_bytes": [
+      {
+        "timeStamp": 1637725438209078,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742062,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347541,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725668369346,
+        "value": 0
+      }
+    ],
+    "sda_write_bytes": [
+      {
+        "timeStamp": 1637725438209080,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742066,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347545,
+        "value": 1536
+      },
+      {
+        "timeStamp": 1637725668369350,
+        "value": 0
+      }
+    ],
+    "sda1_write_bytes": [
+      {
+        "timeStamp": 1637725438209083,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725551742071,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725618347549,
+        "value": 0
+      },
+      {
+        "timeStamp": 1637725668369353,
+        "value": 0
+      }
     ]
   }
 }

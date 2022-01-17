@@ -4,19 +4,25 @@ import 'package:built_value/serializer.dart';
 import 'package:built_value/standard_json_plugin.dart';
 
 import 'model.dart';
+import 'value_list_map.dart';
+import 'chart.dart';
 
 part 'serializers.g.dart';
 
 @SerializersFor([
-  PluginsList,
+  HistoryTimeStamp,
+  TimeStamp,
+  StreamIndex,
+  Plugin,
+  PluginList,
   Cpu,
   CpuHistoryValue,
   CpuHistory,
-  PerCpu,
-  PerCpuHistoryValue,
-  PerCpuHistory,
-  PerCpuList,
-  Core,
+  AllCpus,
+  AllCpusList,
+  AllCpusHistoryValue,
+  AllCpusHistory,
+  Cores,
   DiskIo,
   DiskIoList,
   DiskIoHistoryValue,
@@ -50,37 +56,46 @@ part 'serializers.g.dart';
   Sensor,
   SensorList,
   System,
+  Value,
+  FileSystemHoverText,
+  ListOfValues,
+  MapOfLists,
+  FixedLengthMapOfLists,
+  MapOfMaps,
+  FixedLengthMapOfMapOfLists,
+  Window,
+  PreviousNextPair,
 ])
 final Serializers serializers = _$serializers;
 
 final Serializers standardSerializers = (serializers.toBuilder()
       ..addBuilderFactory(
-        const FullType(TimeStamp, [FullType(num)]),
-        () => TimeStampBuilder<num>(),
+        const FullType(HistoryTimeStamp, [FullType(num)]),
+        () => HistoryTimeStampBuilder<num>(),
       )
       ..addBuilderFactory(
-        const FullType(TimeStamp, [FullType(double)]),
-        () => TimeStampBuilder<double>(),
+        const FullType(HistoryTimeStamp, [FullType(double)]),
+        () => HistoryTimeStampBuilder<double>(),
       )
       ..addBuilderFactory(
-        const FullType(TimeStamp, [FullType(int)]),
-        () => TimeStampBuilder<int>(),
+        const FullType(HistoryTimeStamp, [FullType(int)]),
+        () => HistoryTimeStampBuilder<int>(),
       )
       ..addBuilderFactory(
         const FullType(BuiltList, [
-          FullType(TimeStamp, [
+          FullType(HistoryTimeStamp, [
             FullType(double),
           ]),
         ]),
-        () => ListBuilder<TimeStampBuilder<double>>(),
+        () => ListBuilder<HistoryTimeStampBuilder<double>>(),
       )
       ..addBuilderFactory(
         const FullType(BuiltList, [
-          FullType(TimeStamp, [
+          FullType(HistoryTimeStamp, [
             FullType(int),
           ]),
         ]),
-        () => ListBuilder<TimeStampBuilder<int>>(),
+        () => ListBuilder<HistoryTimeStampBuilder<int>>(),
       )
       ..addBuilderFactory(
         const FullType(

@@ -1,46 +1,164 @@
-import 'dart:convert' as convert;
 import 'dart:io' as io;
 
+import 'package:test/test.dart' as test;
 import 'package:glances_dashboard/src/model.dart' as model;
-import 'package:glances_dashboard/src/serializers.dart' as s;
-import 'package:test/test.dart' as t;
+import 'package:glances_dashboard/src/serializers.dart' as serializers;
 
-List<dynamic> decodeJsonListFromString({required String string}) {
-  return convert.jsonDecode(
-    convert.utf8.decode(
-      string.runes.toList(),
-    ),
-  );
-}
-
-Map<String, dynamic> decodeJsonMapFromString({required String string}) {
-  return convert.jsonDecode(
-    convert.utf8.decode(string.runes.toList()),
-  );
-}
+import 'package:glances_dashboard/src/client.dart' as glances_client;
+import 'package:glances_dashboard/src/mock_client.dart' as mock_client;
 
 void main() {
-  t.group(
-    'PluginsList',
+  final client = mock_client.MockClient();
+
+  test.group(
+    'Now',
     () {
-      t.test(
+      test.test(
+        'fromQuoted() removes quotes',
+        () async {
+          test.expect(
+            !(await client.now()).now.contains(
+                  '"',
+                ),
+            test.isTrue,
+          );
+        },
+      );
+
+      test.test(
+        'supports equality',
+        () async {
+          final now = await client.now();
+          test.expect(
+            now,
+            test.equals(
+              now,
+            ),
+          );
+        },
+      );
+    },
+  );
+
+  test.group(
+    'nowStream()',
+    () {
+      test.test(
+        'can build a list that is non-empty',
+        () async {
+          final list = [];
+          client.nowStream().listen(
+            (
+              now,
+            ) {
+              list.add(
+                now,
+              );
+            },
+          );
+          await Future.delayed(
+            const Duration(
+              seconds: 2,
+            ),
+          );
+          test.expect(
+            list,
+            test.isNotEmpty,
+          );
+        },
+      );
+    },
+  );
+
+  test.group(
+    'UpTime',
+    () {
+      test.test(
+        'fromQuoted() removes quotes',
+        () async {
+          test.expect(
+            !(await client.upTime()).upTime.contains(
+                  '"',
+                ),
+            test.isTrue,
+          );
+        },
+      );
+
+      test.test(
+        'supports equality',
+        () async {
+          final upTime = await client.upTime();
+
+          test.expect(
+            upTime,
+            test.equals(
+              upTime,
+            ),
+          );
+        },
+      );
+    },
+  );
+
+  test.group(
+    'upTimeStream()',
+    () {
+      test.test(
+        'can build a list that is non-empty',
+        () async {
+          final list = [];
+          client.upTimeStream().listen(
+            (
+              now,
+            ) {
+              list.add(
+                now,
+              );
+            },
+          );
+          await Future.delayed(
+            const Duration(
+              seconds: 2,
+            ),
+          );
+          test.expect(
+            list,
+            test.isNotEmpty,
+          );
+        },
+      );
+    },
+  );
+
+  test.group(
+    'PluginList',
+    () {
+      test.test(
         'deserializes and serializes',
         () async {
-          var json =
-              await io.File('test/json/plugins_list.json').readAsString();
-          var list = decodeJsonListFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              model.PluginsList.fromJson(
-                list: list,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.pluginsList(),
             )!,
-            t.equals(
+            test.equals(
               {
-                '\$': 'PluginsList',
-                'list': list,
+                '\$': 'PluginList',
+                'list': glances_client
+                    .decodeJsonListFromString(
+                      string: await io.File(
+                        'test/json/plugins_list.json',
+                      ).readAsString(),
+                    )
+                    .map(
+                      (
+                        s,
+                      ) =>
+                          {
+                        'value': s,
+                      },
+                    )
+                    .toList(),
               },
             ),
           );
@@ -49,27 +167,25 @@ void main() {
     },
   );
 
-  t.group(
-    'Cpu',
+  test.group(
+    'Cores',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/cpu.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.Cpu.serializer,
-                map,
-              )!,
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.cores(),
             )!,
-            t.equals(
-              map
-                ..addAll(
-                  {'\$': 'Cpu'},
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/cores.json',
+                ).readAsString(),
+              )..addAll(
+                  {
+                    '\$': 'Cores',
+                  },
                 ),
             ),
           );
@@ -78,24 +194,52 @@ void main() {
     },
   );
 
-  t.group(
-    'CpuHistoryValue',
+  test.group(
+    'Cpu',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/cpu_history.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.cpu()).model,
+            )!,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/cpu.json',
+                ).readAsString(),
+              )..addAll(
+                  {
+                    '\$': 'Cpu',
+                  },
+                ),
+            ),
           );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
+        },
+      );
+    },
+  );
+
+  test.group(
+    'CpuHistoryValue',
+    () {
+      test.test(
+        'deserializes and serializes',
+        () async {
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/cpu_history.json',
+            ).readAsString(),
+          );
+          test.expect(
+            serializers.standardSerializers.serialize(
+              serializers.standardSerializers.deserializeWith(
                 model.CpuHistoryValue.serializer,
                 map,
               )!,
             )!,
-            t.equals(
+            test.equals(
               map
                 ..addAll(
                   {
@@ -109,29 +253,21 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'CpuHistory',
     () {
-      t.test(
+      test.test(
         'serializes',
         () async {
-          var json = await io.File('test/json/cpu_history.json').readAsString();
-          var output =
-              await io.File('test/json/cpu_history_output.json').readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.CpuHistory.fromCpuHistoryValue(
-                value: s.standardSerializers.deserializeWith(
-                  model.CpuHistoryValue.serializer,
-                  decodeJsonMapFromString(
-                    string: json,
-                  ),
-                )!,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.cpuHistory(),
             )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/cpu_history_output.json',
+                ).readAsString(),
               ),
             ),
           );
@@ -140,26 +276,24 @@ void main() {
     },
   );
 
-  t.group(
-    'PerCpuList',
+  test.group(
+    'AllCpuList',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/per_cpu.json').readAsString();
-          var list = decodeJsonListFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              model.PerCpuList.fromJson(
-                list: list,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.allCpus()).model,
             )!,
-            t.equals(
+            test.equals(
               {
-                '\$': 'PerCpuList',
-                'list': list,
+                '\$': 'AllCpusList',
+                'list': glances_client.decodeJsonListFromString(
+                  string: await io.File(
+                    'test/json/all_cpus.json',
+                  ).readAsString(),
+                ),
               },
             ),
           );
@@ -168,23 +302,25 @@ void main() {
     },
   );
 
-  t.group(
-    'PerCpuHistoryValue',
+  test.group(
+    'AllCpusHistoryValue',
     () {
-      t.test(
+      test.test(
         'deserializes',
         () async {
-          var string =
-              await io.File('test/json/per_cpu_history.json').readAsString();
-          var map = decodeJsonMapFromString(string: string);
-          t.expect(
-            s.standardSerializers.serializeWith(
-              model.PerCpuHistoryValue.serializer,
-              model.PerCpuHistoryValue.fromJson(
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/all_cpus_history.json',
+            ).readAsString(),
+          );
+          test.expect(
+            serializers.standardSerializers.serializeWith(
+              model.AllCpusHistoryValue.serializer,
+              model.AllCpusHistoryValue.fromJson(
                 map: map,
               ),
             )!,
-            t.equals(
+            test.equals(
               {
                 'history': map,
               },
@@ -195,29 +331,21 @@ void main() {
     },
   );
 
-  t.group(
-    'PerCpuHistory',
+  test.group(
+    'AllCpusHistory',
     () {
-      t.test(
+      test.test(
         'serializes',
         () async {
-          var json =
-              await io.File('test/json/per_cpu_history.json').readAsString();
-          var output = await io.File('test/json/per_cpu_history_output.json')
-              .readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.PerCpuHistory.fromPerCpuHistoryValue(
-                value: model.PerCpuHistoryValue.fromJson(
-                  map: decodeJsonMapFromString(
-                    string: json,
-                  ),
-                ),
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.allCpusHistory(),
             )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/all_cpus_history_output.json',
+                ).readAsString(),
               ),
             ),
           );
@@ -226,27 +354,57 @@ void main() {
     },
   );
 
-  t.group(
-    'Core',
+  test.group(
+    'CpuLoad',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/core.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.cpuLoad()).model,
+            )!,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/cpu_load.json',
+                ).readAsString(),
+              )..addAll(
+                  {
+                    '\$': 'CpuLoad',
+                  },
+                ),
+            ),
           );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.Core.serializer,
+        },
+      );
+    },
+  );
+
+  test.group(
+    'CpuLoadHistoryValue',
+    () {
+      test.test(
+        'deserializes and serializes',
+        () async {
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/cpu_load_history.json',
+            ).readAsString(),
+          );
+          test.expect(
+            serializers.standardSerializers.serialize(
+              serializers.standardSerializers.deserializeWith(
+                model.CpuLoadHistoryValue.serializer,
                 map,
               )!,
             )!,
-            t.equals(
+            test.equals(
               map
                 ..addAll(
-                  {'\$': 'Core'},
+                  {
+                    '\$': 'CpuLoadHistoryValue',
+                  },
                 ),
             ),
           );
@@ -255,26 +413,47 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
+    'CpuLoadHistory',
+    () {
+      test.test(
+        'serializes',
+        () async {
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.cpuLoadHistory(),
+            )!,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/cpu_load_history_output.json',
+                ).readAsString(),
+              ),
+            ),
+          );
+        },
+      );
+    },
+  );
+
+  test.group(
     'DiskIoList',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/disk_io.json').readAsString();
-          var list = decodeJsonListFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              model.DiskIoList.fromJson(
-                list: list,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.diskIo()).model,
             )!,
-            t.equals(
+            test.equals(
               {
                 '\$': 'DiskIoList',
-                'list': list,
+                'list': glances_client.decodeJsonListFromString(
+                  string: await io.File(
+                    'test/json/disk_io.json',
+                  ).readAsString(),
+                ),
               },
             ),
           );
@@ -283,23 +462,25 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'DiskIoHistoryValue',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var string =
-              await io.File('test/json/disk_io_history.json').readAsString();
-          var map = decodeJsonMapFromString(string: string);
-          t.expect(
-            s.standardSerializers.serializeWith(
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/disk_io_history.json',
+            ).readAsString(),
+          );
+          test.expect(
+            serializers.standardSerializers.serializeWith(
               model.DiskIoHistoryValue.serializer,
               model.DiskIoHistoryValue.fromJson(
                 map: map,
               ),
             )!,
-            t.equals(
+            test.equals(
               {
                 'history': map,
               },
@@ -310,29 +491,21 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'DiskIoHistory',
     () {
-      t.test(
+      test.test(
         'serializes',
         () async {
-          var json =
-              await io.File('test/json/disk_io_history.json').readAsString();
-          var output = await io.File('test/json/disk_io_history_output.json')
-              .readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.DiskIoHistory.fromDiskIoHistoryValue(
-                value: model.DiskIoHistoryValue.fromJson(
-                  map: decodeJsonMapFromString(
-                    string: json,
-                  ),
-                ),
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.diskIoHistory(),
             )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/disk_io_history_output.json',
+                ).readAsString(),
               ),
             ),
           );
@@ -341,26 +514,24 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'FileSystemList',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/file_system.json').readAsString();
-          var list = decodeJsonListFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              model.FileSystemList.fromJson(
-                list: list,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.fileSystem()).model,
             )!,
-            t.equals(
+            test.equals(
               {
                 '\$': 'FileSystemList',
-                'list': list,
+                'list': glances_client.decodeJsonListFromString(
+                  string: await io.File(
+                    'test/json/file_system.json',
+                  ).readAsString(),
+                ),
               },
             ),
           );
@@ -369,23 +540,25 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'FileSystemHistoryValue',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var string = await io.File('test/json/file_system_history.json')
-              .readAsString();
-          var map = decodeJsonMapFromString(string: string);
-          t.expect(
-            s.standardSerializers.serializeWith(
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/file_system_history.json',
+            ).readAsString(),
+          );
+          test.expect(
+            serializers.standardSerializers.serializeWith(
               model.FileSystemHistoryValue.serializer,
               model.FileSystemHistoryValue.fromJson(
                 map: map,
               ),
             )!,
-            t.equals(
+            test.equals(
               {
                 'history': map,
               },
@@ -396,30 +569,21 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'FileSystemHistory',
     () {
-      t.test(
+      test.test(
         'serializes',
         () async {
-          var json = await io.File('test/json/file_system_history.json')
-              .readAsString();
-          var output =
-              await io.File('test/json/file_system_history_output.json')
-                  .readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.FileSystemHistory.fromFileSystemHistoryValue(
-                value: model.FileSystemHistoryValue.fromJson(
-                  map: decodeJsonMapFromString(
-                    string: json,
-                  ),
-                ),
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.fileSystemHistory(),
             )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/file_system_history_output.json',
+                ).readAsString(),
               ),
             ),
           );
@@ -428,28 +592,25 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'InternetProtocol',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json =
-              await io.File('test/json/internet_protocol.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.InternetProtocol.serializer,
-                map,
-              )!,
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.internetProtocol(),
             )!,
-            t.equals(
-              map
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                  string: await io.File(
+                'test/json/internet_protocol.json',
+              ).readAsString())
                 ..addAll(
-                  {'\$': 'InternetProtocol'},
+                  {
+                    '\$': 'InternetProtocol',
+                  },
                 ),
             ),
           );
@@ -458,118 +619,25 @@ void main() {
     },
   );
 
-  t.group(
-    'CpuLoad',
-    () {
-      t.test(
-        'deserializes and serializes',
-        () async {
-          var json = await io.File('test/json/cpu_load.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.CpuLoad.serializer,
-                map,
-              )!,
-            )!,
-            t.equals(
-              map
-                ..addAll(
-                  {'\$': 'CpuLoad'},
-                ),
-            ),
-          );
-        },
-      );
-    },
-  );
-
-  t.group(
-    'CpuLoadHistoryValue',
-    () {
-      t.test(
-        'deserializes and serializes',
-        () async {
-          var json =
-              await io.File('test/json/cpu_load_history.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.CpuLoadHistoryValue.serializer,
-                map,
-              )!,
-            )!,
-            t.equals(
-              map
-                ..addAll(
-                  {'\$': 'CpuLoadHistoryValue'},
-                ),
-            ),
-          );
-        },
-      );
-    },
-  );
-
-  t.group(
-    'CpuLoadHistory',
-    () {
-      t.test(
-        'serializes',
-        () async {
-          var json =
-              await io.File('test/json/cpu_load_history.json').readAsString();
-          var output = await io.File('test/json/cpu_load_history_output.json')
-              .readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.CpuLoadHistory.fromCpuLoadHistoryValue(
-                value: s.standardSerializers.deserializeWith(
-                  model.CpuLoadHistoryValue.serializer,
-                  decodeJsonMapFromString(
-                    string: json,
-                  ),
-                )!,
-              ),
-            )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
-              ),
-            ),
-          );
-        },
-      );
-    },
-  );
-
-  t.group(
+  test.group(
     'Memory',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/memory.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.Memory.serializer,
-                map,
-              )!,
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.memory()).model,
             )!,
-            t.equals(
-              map
-                ..addAll(
-                  {'\$': 'Memory'},
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/memory.json',
+                ).readAsString(),
+              )..addAll(
+                  {
+                    '\$': 'Memory',
+                  },
                 ),
             ),
           );
@@ -578,28 +646,30 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'MemoryHistoryValue',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json =
-              await io.File('test/json/memory_history.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/memory_history.json',
+            ).readAsString(),
           );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
+          test.expect(
+            serializers.standardSerializers.serialize(
+              serializers.standardSerializers.deserializeWith(
                 model.MemoryHistoryValue.serializer,
                 map,
               )!,
             )!,
-            t.equals(
+            test.equals(
               map
                 ..addAll(
-                  {'\$': 'MemoryHistoryValue'},
+                  {
+                    '\$': 'MemoryHistoryValue',
+                  },
                 ),
             ),
           );
@@ -608,30 +678,21 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'MemoryHistory',
     () {
-      t.test(
+      test.test(
         'serializes',
         () async {
-          var json =
-              await io.File('test/json/memory_history.json').readAsString();
-          var output = await io.File('test/json/memory_history_output.json')
-              .readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.MemoryHistory.fromMemoryHistoryValue(
-                value: s.standardSerializers.deserializeWith(
-                  model.MemoryHistoryValue.serializer,
-                  decodeJsonMapFromString(
-                    string: json,
-                  ),
-                )!,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.memoryHistory(),
             )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/memory_history_output.json',
+                ).readAsString(),
               ),
             ),
           );
@@ -640,27 +701,25 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'MemorySwap',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/memory_swap.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.MemorySwap.serializer,
-                map,
-              )!,
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.memorySwap()).model,
             )!,
-            t.equals(
-              map
-                ..addAll(
-                  {'\$': 'MemorySwap'},
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/memory_swap.json',
+                ).readAsString(),
+              )..addAll(
+                  {
+                    '\$': 'MemorySwap',
+                  },
                 ),
             ),
           );
@@ -669,28 +728,30 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'MemorySwapHistoryValue',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/memory_swap_history.json')
-              .readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/memory_swap_history.json',
+            ).readAsString(),
           );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
+          test.expect(
+            serializers.standardSerializers.serialize(
+              serializers.standardSerializers.deserializeWith(
                 model.MemorySwapHistoryValue.serializer,
                 map,
               )!,
             )!,
-            t.equals(
+            test.equals(
               map
                 ..addAll(
-                  {'\$': 'MemorySwapHistoryValue'},
+                  {
+                    '\$': 'MemorySwapHistoryValue',
+                  },
                 ),
             ),
           );
@@ -699,31 +760,21 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'MemorySwapHistory',
     () {
-      t.test(
+      test.test(
         'serializes',
         () async {
-          var json = await io.File('test/json/memory_swap_history.json')
-              .readAsString();
-          var output =
-              await io.File('test/json/memory_swap_history_output.json')
-                  .readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.MemorySwapHistory.fromMemorySwapHistoryValue(
-                value: s.standardSerializers.deserializeWith(
-                  model.MemorySwapHistoryValue.serializer,
-                  decodeJsonMapFromString(
-                    string: json,
-                  ),
-                )!,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.memorySwapHistory(),
             )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/memory_swap_history_output.json',
+                ).readAsString(),
               ),
             ),
           );
@@ -732,29 +783,32 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'NetworkInterfaceList',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json =
-              await io.File('test/json/network_interface.json').readAsString();
-          var list = decodeJsonListFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              model.NetworkInterfaceList.fromJson(
-                list: list,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.networkInterface()).model,
             )!,
-            t.equals(
+            test.equals(
               {
                 '\$': 'NetworkInterfaceList',
-                'list': list.map(
-                  (map) {
-                    map.remove('alias');
+                'list': glances_client
+                    .decodeJsonListFromString(
+                  string: await io.File(
+                    'test/json/network_interface.json',
+                  ).readAsString(),
+                )
+                    .map(
+                  (
+                    map,
+                  ) {
+                    map.remove(
+                      'alias',
+                    );
                     return map;
                   },
                 ).toList(),
@@ -766,23 +820,25 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'NetworkHistoryValue',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var string =
-              await io.File('test/json/network_history.json').readAsString();
-          var map = decodeJsonMapFromString(string: string);
-          t.expect(
-            s.standardSerializers.serializeWith(
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/network_history.json',
+            ).readAsString(),
+          );
+          test.expect(
+            serializers.standardSerializers.serializeWith(
               model.NetworkHistoryValue.serializer,
               model.NetworkHistoryValue.fromJson(
                 map: map,
               ),
             )!,
-            t.equals(
+            test.equals(
               {
                 'history': map,
               },
@@ -793,29 +849,21 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'NetworkHistory',
     () {
-      t.test(
+      test.test(
         'serializes',
         () async {
-          var json =
-              await io.File('test/json/network_history.json').readAsString();
-          var output = await io.File('test/json/network_history_output.json')
-              .readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.NetworkHistory.fromNetworkHistoryValue(
-                value: model.NetworkHistoryValue.fromJson(
-                  map: decodeJsonMapFromString(
-                    string: json,
-                  ),
-                ),
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.networkHistory(),
             )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/network_history_output.json',
+                ).readAsString(),
               ),
             ),
           );
@@ -824,58 +872,25 @@ void main() {
     },
   );
 
-  t.group(
-    'Now',
-    () {
-      t.test(
-        'fromQuoted() removes quotes',
-        () async {
-          var string = await io.File('test/json/now.json').readAsString();
-          t.expect(
-              !model.Now.fromQuoted(quoted: string).now.contains(
-                    '"',
-                  ),
-              t.isTrue);
-        },
-      );
-
-      t.test(
-        'supports equality',
-        () async {
-          var string = await io.File('test/json/now.json').readAsString();
-          t.expect(
-            model.Now.fromQuoted(quoted: string),
-            t.equals(
-              model.Now.fromQuoted(quoted: string),
-            ),
-          );
-        },
-      );
-    },
-  );
-
-  t.group(
+  test.group(
     'ProcessCount',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json =
-              await io.File('test/json/process_count.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.ProcessCount.serializer,
-                map,
-              )!,
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.processCount()).model,
             )!,
-            t.equals(
-              map
-                ..addAll(
-                  {'\$': 'ProcessCount'},
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/process_count.json',
+                ).readAsString(),
+              )..addAll(
+                  {
+                    '\$': 'ProcessCount',
+                  },
                 ),
             ),
           );
@@ -884,28 +899,30 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'ProcessCountHistoryValue',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/process_count_history.json')
-              .readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/process_count_history.json',
+            ).readAsString(),
           );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
+          test.expect(
+            serializers.standardSerializers.serialize(
+              serializers.standardSerializers.deserializeWith(
                 model.ProcessCountHistoryValue.serializer,
                 map,
               )!,
             )!,
-            t.equals(
+            test.equals(
               map
                 ..addAll(
-                  {'\$': 'ProcessCountHistoryValue'},
+                  {
+                    '\$': 'ProcessCountHistoryValue',
+                  },
                 ),
             ),
           );
@@ -914,31 +931,21 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'ProcessCountHistory',
     () {
-      t.test(
+      test.test(
         'serializes',
         () async {
-          var json = await io.File('test/json/process_count_history.json')
-              .readAsString();
-          var output =
-              await io.File('test/json/process_count_history_output.json')
-                  .readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.ProcessCountHistory.fromProcessCountHistoryValue(
-                value: s.standardSerializers.deserializeWith(
-                  model.ProcessCountHistoryValue.serializer,
-                  decodeJsonMapFromString(
-                    string: json,
-                  ),
-                )!,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.processCountHistory(),
             )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/process_count_history_output.json',
+                ).readAsString(),
               ),
             ),
           );
@@ -947,27 +954,24 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'ProcessList',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json =
-              await io.File('test/json/process_list.json').readAsString();
-          var list = decodeJsonListFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              model.ProcessList.fromJson(
-                list: list,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.processList()).model,
             )!,
-            t.equals(
+            test.equals(
               {
                 '\$': 'ProcessList',
-                'list': list,
+                'list': glances_client.decodeJsonListFromString(
+                  string: await io.File(
+                    'test/json/process_list.json',
+                  ).readAsString(),
+                ),
               },
             ),
           );
@@ -976,27 +980,25 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'QuickLook',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/quick_look.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.QuickLook.serializer,
-                map,
-              )!,
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.quickLook()).model,
             )!,
-            t.equals(
-              map
-                ..addAll(
-                  {'\$': 'QuickLook'},
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/quick_look.json',
+                ).readAsString(),
+              )..addAll(
+                  {
+                    '\$': 'QuickLook',
+                  },
                 ),
             ),
           );
@@ -1005,28 +1007,30 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'QuickLookHistoryValue',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json =
-              await io.File('test/json/quick_look_history.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
+          final map = glances_client.decodeJsonMapFromString(
+            string: await io.File(
+              'test/json/quick_look_history.json',
+            ).readAsString(),
           );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
+          test.expect(
+            serializers.standardSerializers.serialize(
+              serializers.standardSerializers.deserializeWith(
                 model.QuickLookHistoryValue.serializer,
                 map,
               )!,
             )!,
-            t.equals(
+            test.equals(
               map
                 ..addAll(
-                  {'\$': 'QuickLookHistoryValue'},
+                  {
+                    '\$': 'QuickLookHistoryValue',
+                  },
                 ),
             ),
           );
@@ -1035,30 +1039,21 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'QuickLookHistory',
     () {
-      t.test(
+      test.test(
         'serializes',
         () async {
-          var json =
-              await io.File('test/json/quick_look_history.json').readAsString();
-          var output = await io.File('test/json/quick_look_history_output.json')
-              .readAsString();
-          t.expect(
-            s.standardSerializers.serialize(
-              model.QuickLookHistory.fromQuickLookHistoryValue(
-                value: s.standardSerializers.deserializeWith(
-                  model.QuickLookHistoryValue.serializer,
-                  decodeJsonMapFromString(
-                    string: json,
-                  ),
-                )!,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.quickLookHistory(),
             )!,
-            t.equals(
-              decodeJsonMapFromString(
-                string: output,
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/quick_look_history_output.json',
+                ).readAsString(),
               ),
             ),
           );
@@ -1067,29 +1062,35 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'SensorList',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/sensors.json').readAsString();
-          var list = decodeJsonListFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              model.SensorList.fromJson(
-                list: list,
-              ),
+          test.expect(
+            serializers.standardSerializers.serialize(
+              (await client.sensors()).model,
             )!,
-            t.equals(
+            test.equals(
               {
                 '\$': 'SensorList',
-                'list': list.map(
-                  (sensor) {
-                    sensor.remove('warning');
-                    sensor.remove('critical');
+                'list': glances_client
+                    .decodeJsonListFromString(
+                  string: await io.File(
+                    'test/json/sensors.json',
+                  ).readAsString(),
+                )
+                    .map(
+                  (
+                    sensor,
+                  ) {
+                    sensor.remove(
+                      'warning',
+                    );
+                    sensor.remove(
+                      'critical',
+                    );
                     return sensor;
                   },
                 ),
@@ -1101,58 +1102,26 @@ void main() {
     },
   );
 
-  t.group(
+  test.group(
     'System',
     () {
-      t.test(
+      test.test(
         'deserializes and serializes',
         () async {
-          var json = await io.File('test/json/system.json').readAsString();
-          var map = decodeJsonMapFromString(
-            string: json,
-          );
-          t.expect(
-            s.standardSerializers.serialize(
-              s.standardSerializers.deserializeWith(
-                model.System.serializer,
-                map,
-              )!,
+          test.expect(
+            serializers.standardSerializers.serialize(
+              await client.system(),
             )!,
-            t.equals(
-              map
-                ..addAll(
-                  {'\$': 'System'},
+            test.equals(
+              glances_client.decodeJsonMapFromString(
+                string: await io.File(
+                  'test/json/system.json',
+                ).readAsString(),
+              )..addAll(
+                  {
+                    '\$': 'System',
+                  },
                 ),
-            ),
-          );
-        },
-      );
-    },
-  );
-
-  t.group(
-    'UpTime',
-    () {
-      t.test(
-        'fromQuoted() removes quotes',
-        () async {
-          var string = await io.File('test/json/up_time.json').readAsString();
-          t.expect(
-              !model.UpTime.fromQuoted(quoted: string).upTime.contains(
-                    '"',
-                  ),
-              t.isTrue);
-        },
-      );
-
-      t.test(
-        'supports equality',
-        () async {
-          var string = await io.File('test/json/up_time.json').readAsString();
-          t.expect(
-            model.UpTime.fromQuoted(quoted: string),
-            t.equals(
-              model.UpTime.fromQuoted(quoted: string),
             ),
           );
         },

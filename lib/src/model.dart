@@ -7,36 +7,34 @@ import 'package:glances_dashboard/src/serializers.dart';
 
 part 'model.g.dart';
 
-abstract class TimeStamp<T extends num>
-    implements Built<TimeStamp<T>, TimeStampBuilder<T>> {
-  static Serializer<TimeStamp> get serializer => _$timeStampSerializer;
+abstract class HistoryTimeStamp<T extends num>
+    implements Built<HistoryTimeStamp<T>, HistoryTimeStampBuilder<T>> {
+  static Serializer<HistoryTimeStamp<num>> get serializer =>
+      _$historyTimeStampSerializer;
 
   DateTime get timeStamp;
 
   T get value;
 
-  factory TimeStamp([
-    Function(TimeStampBuilder<T>) updates,
-  ]) = _$TimeStamp<T>;
+  factory HistoryTimeStamp([
+    Function(HistoryTimeStampBuilder<T>) updates,
+  ]) = _$HistoryTimeStamp<T>;
 
-  TimeStamp._();
+  HistoryTimeStamp._();
 }
 
-ListBuilder<TimeStamp<T>> timeStampListBuilderFromJsonObjectList<T extends num>(
-    {required BuiltList<BuiltList<JsonObject>> list}) {
-  return list
-      .map(
-        (timeStamp) {
-          return TimeStamp<T>(
-            (b) => b
-              ..timeStamp = DateTime.parse(timeStamp[0].asString).toUtc()
-              ..value = timeStamp[1].asNum as T,
-          );
-        },
-      )
-      .toBuiltList()
-      .toBuilder();
-}
+ListBuilder<HistoryTimeStamp<T>>
+    timeStampListBuilderFromJsonObjectList<T extends num>(
+            {required BuiltList<BuiltList<JsonObject>> list}) =>
+        ListBuilder(
+          list.map(
+            (timeStamp) => HistoryTimeStamp<T>(
+              (b) => b
+                ..timeStamp = DateTime.parse(timeStamp[0].asString).toUtc()
+                ..value = timeStamp[1].asNum as T,
+            ),
+          ),
+        );
 
 MapBuilder<String, BuiltList<BuiltList<JsonObject>>>
     timeStampJsonObjectMapBuilder({required Map<String, dynamic> map}) {
@@ -63,23 +61,24 @@ MapBuilder<String, BuiltList<BuiltList<JsonObject>>>
       .toBuilder();
 }
 
-MapBuilder<String, BuiltList<TimeStamp<T>>> timeStampMapper<T extends num>({
+MapBuilder<String, BuiltList<HistoryTimeStamp<T>>>
+    timeStampMapper<T extends num>({
   required BuiltMap<String, BuiltList<BuiltList<JsonObject>>> map,
 }) {
-  return map
-      .map<String, BuiltList<TimeStamp<T>>>(
-        (
-          key,
-          list,
-        ) =>
-            MapEntry<String, BuiltList<TimeStamp<T>>>(
-          key,
-          timeStampListBuilderFromJsonObjectList<T>(
-            list: list,
-          ).build(),
-        ),
-      )
-      .toBuilder();
+  return MapBuilder(
+    map.map(
+      (
+        key,
+        list,
+      ) =>
+          MapEntry(
+        key,
+        timeStampListBuilderFromJsonObjectList<T>(
+          list: list,
+        ).build(),
+      ),
+    ),
+  );
 }
 
 class Now extends eq.Equatable {
@@ -136,31 +135,133 @@ class UpTime extends eq.Equatable {
   });
 }
 
-abstract class PluginsList implements Built<PluginsList, PluginsListBuilder> {
-  static Serializer<PluginsList> get serializer => _$pluginsListSerializer;
+@BuiltValue(instantiable: false)
+abstract class ModelBase extends Object {
+  ModelBase rebuild(
+    void Function(ModelBaseBuilder) updates,
+  );
 
-  BuiltList<String> get list;
+  ModelBaseBuilder toBuilder();
+}
 
-  PluginsList._();
+@BuiltValue(instantiable: false)
+abstract class Model extends Object implements ModelBase {
+  @override
+  Model rebuild(
+    void Function(ModelBuilder) updates,
+  );
 
-  factory PluginsList([
-    void Function(PluginsListBuilder) updates,
-  ]) = _$PluginsList;
+  @override
+  ModelBuilder toBuilder();
+}
 
-  factory PluginsList.fromJson({
+@BuiltValue(instantiable: false)
+abstract class StreamModel extends Object implements ModelBase {
+  @override
+  StreamModel rebuild(
+    void Function(StreamModelBuilder) updates,
+  );
+
+  @override
+  StreamModelBuilder toBuilder();
+}
+
+abstract class TimeStamp<M extends StreamModel>
+    implements Built<TimeStamp<M>, TimeStampBuilder<M>> {
+  static Serializer<TimeStamp<StreamModel>> get serializer =>
+      _$timeStampSerializer;
+
+  DateTime get timeStamp;
+  M get model;
+
+  TimeStamp._();
+  factory TimeStamp([
+    void Function(TimeStampBuilder<M>) updates,
+  ]) = _$TimeStamp<M>;
+}
+
+abstract class StreamIndex<M extends StreamModel>
+    implements Built<StreamIndex<M>, StreamIndexBuilder<M>> {
+  static Serializer<StreamIndex<StreamModel>> get serializer =>
+      _$streamIndexSerializer;
+
+  int get index;
+  TimeStamp<M> get timeStamp;
+
+  StreamIndex._();
+  factory StreamIndex([
+    void Function(StreamIndexBuilder<M>) updates,
+  ]) = _$StreamIndex<M>;
+}
+
+@BuiltValue(instantiable: false)
+abstract class HistoryModel extends Object implements ModelBase {
+  @override
+  HistoryModel rebuild(
+    void Function(HistoryModelBuilder) updates,
+  );
+
+  @override
+  HistoryModelBuilder toBuilder();
+}
+
+@BuiltValue(instantiable: false)
+abstract class ModelList<M extends Model> extends Object
+    implements StreamModel {
+  BuiltList<M> get list;
+
+  @override
+  ModelList<M> rebuild(
+    void Function(ModelListBuilder<M>) updates,
+  );
+
+  @override
+  ModelListBuilder<M> toBuilder();
+}
+
+abstract class Plugin implements Model, Built<Plugin, PluginBuilder> {
+  static Serializer<Plugin> get serializer => _$pluginSerializer;
+
+  String get value;
+
+  Plugin._();
+  factory Plugin([
+    void Function(PluginBuilder) updates,
+  ]) = _$Plugin;
+}
+
+abstract class PluginList
+    implements ModelList<Plugin>, Built<PluginList, PluginListBuilder> {
+  static Serializer<PluginList> get serializer => _$pluginListSerializer;
+
+  @override
+  BuiltList<Plugin> get list;
+
+  PluginList._();
+
+  factory PluginList([
+    void Function(PluginListBuilder) updates,
+  ]) = _$PluginList;
+
+  factory PluginList.fromJson({
     required List<dynamic> list,
   }) {
-    return PluginsList(
+    return PluginList(
       (b) => b
-        ..list = ListBuilder<String>(
-          list,
+        ..list = ListBuilder<Plugin>(
+          list.map(
+            (s) => Plugin((
+              b,
+            ) =>
+                b.value = s),
+          ),
         ),
     );
   }
 }
 
-abstract class Core implements Built<Core, CoreBuilder> {
-  static Serializer<Core> get serializer => _$coreSerializer;
+abstract class Cores implements Model, Built<Cores, CoresBuilder> {
+  static Serializer<Cores> get serializer => _$coresSerializer;
 
   @BuiltValueField(
     wireName: 'phys',
@@ -172,14 +273,14 @@ abstract class Core implements Built<Core, CoreBuilder> {
   )
   int get logical;
 
-  Core._();
+  Cores._();
 
-  factory Core([
-    void Function(CoreBuilder) updates,
-  ]) = _$Core;
+  factory Cores([
+    void Function(CoresBuilder) updates,
+  ]) = _$Cores;
 }
 
-abstract class Cpu implements Built<Cpu, CpuBuilder> {
+abstract class Cpu implements StreamModel, Built<Cpu, CpuBuilder> {
   static Serializer<Cpu> get serializer => _$cpuSerializer;
 
   double get total;
@@ -221,7 +322,7 @@ abstract class Cpu implements Built<Cpu, CpuBuilder> {
   @BuiltValueField(
     wireName: 'cpucore',
   )
-  int get cpuCore;
+  int get cpuCoresCount;
 
   @BuiltValueField(
     wireName: 'ctx_switches',
@@ -263,12 +364,13 @@ abstract class CpuHistoryValue
   ]) = _$CpuHistoryValue;
 }
 
-abstract class CpuHistory implements Built<CpuHistory, CpuHistoryBuilder> {
+abstract class CpuHistory
+    implements HistoryModel, Built<CpuHistory, CpuHistoryBuilder> {
   static Serializer<CpuHistory> get serializer => _$cpuHistorySerializer;
 
-  BuiltList<TimeStamp> get user;
+  BuiltList<HistoryTimeStamp<double>> get user;
 
-  BuiltList<TimeStamp> get system;
+  BuiltList<HistoryTimeStamp<double>> get system;
 
   CpuHistory._();
 
@@ -291,15 +393,15 @@ abstract class CpuHistory implements Built<CpuHistory, CpuHistoryBuilder> {
   }
 }
 
-abstract class PerCpu implements Built<PerCpu, PerCpuBuilder> {
-  static Serializer<PerCpu> get serializer => _$perCpuSerializer;
+abstract class AllCpus implements Model, Built<AllCpus, AllCpusBuilder> {
+  static Serializer<AllCpus> get serializer => _$allCpusSerializer;
 
   String get key;
 
   @BuiltValueField(
     wireName: 'cpu_number',
   )
-  int get cpuNumber;
+  int get number;
 
   double get total;
 
@@ -332,33 +434,35 @@ abstract class PerCpu implements Built<PerCpu, PerCpuBuilder> {
   )
   double get guestNice;
 
-  PerCpu._();
+  AllCpus._();
 
-  factory PerCpu([
-    void Function(PerCpuBuilder) updates,
-  ]) = _$PerCpu;
+  factory AllCpus([
+    void Function(AllCpusBuilder) updates,
+  ]) = _$AllCpus;
 }
 
-abstract class PerCpuList implements Built<PerCpuList, PerCpuListBuilder> {
-  static Serializer<PerCpuList> get serializer => _$perCpuListSerializer;
+abstract class AllCpusList
+    implements ModelList<AllCpus>, Built<AllCpusList, AllCpusListBuilder> {
+  static Serializer<AllCpusList> get serializer => _$allCpusListSerializer;
 
-  BuiltList<PerCpu> get list;
+  @override
+  BuiltList<AllCpus> get list;
 
-  PerCpuList._();
+  AllCpusList._();
 
-  factory PerCpuList([
-    void Function(PerCpuListBuilder) updates,
-  ]) = _$PerCpuList;
+  factory AllCpusList([
+    void Function(AllCpusListBuilder) updates,
+  ]) = _$AllCpusList;
 
-  factory PerCpuList.fromJson({
+  factory AllCpusList.fromJson({
     required List<dynamic> list,
   }) {
-    return PerCpuList(
+    return AllCpusList(
       (b) => b
         ..list = ListBuilder(
           list.map(
             (perCpu) => standardSerializers.deserializeWith(
-              PerCpu.serializer,
+              AllCpus.serializer,
               perCpu,
             )!,
           ),
@@ -367,23 +471,23 @@ abstract class PerCpuList implements Built<PerCpuList, PerCpuListBuilder> {
   }
 }
 
-abstract class PerCpuHistoryValue
-    implements Built<PerCpuHistoryValue, PerCpuHistoryValueBuilder> {
-  static Serializer<PerCpuHistoryValue> get serializer =>
-      _$perCpuHistoryValueSerializer;
+abstract class AllCpusHistoryValue
+    implements Built<AllCpusHistoryValue, AllCpusHistoryValueBuilder> {
+  static Serializer<AllCpusHistoryValue> get serializer =>
+      _$allCpusHistoryValueSerializer;
 
   BuiltMap<String, BuiltList<BuiltList<JsonObject>>> get history;
 
-  PerCpuHistoryValue._();
+  AllCpusHistoryValue._();
 
-  factory PerCpuHistoryValue([
-    void Function(PerCpuHistoryValueBuilder) updates,
-  ]) = _$PerCpuHistoryValue;
+  factory AllCpusHistoryValue([
+    void Function(AllCpusHistoryValueBuilder) updates,
+  ]) = _$AllCpusHistoryValue;
 
-  factory PerCpuHistoryValue.fromJson({
+  factory AllCpusHistoryValue.fromJson({
     required Map<String, dynamic> map,
   }) {
-    return PerCpuHistoryValue(
+    return AllCpusHistoryValue(
       (b) => b
         ..history = timeStampJsonObjectMapBuilder(
           map: map,
@@ -392,22 +496,23 @@ abstract class PerCpuHistoryValue
   }
 }
 
-abstract class PerCpuHistory
-    implements Built<PerCpuHistory, PerCpuHistoryBuilder> {
-  static Serializer<PerCpuHistory> get serializer => _$perCpuHistorySerializer;
+abstract class AllCpusHistory
+    implements HistoryModel, Built<AllCpusHistory, AllCpusHistoryBuilder> {
+  static Serializer<AllCpusHistory> get serializer =>
+      _$allCpusHistorySerializer;
 
-  BuiltMap<String, BuiltList<TimeStamp<double>>> get history;
+  BuiltMap<String, BuiltList<HistoryTimeStamp<double>>> get history;
 
-  PerCpuHistory._();
+  AllCpusHistory._();
 
-  factory PerCpuHistory([
-    void Function(PerCpuHistoryBuilder) updates,
-  ]) = _$PerCpuHistory;
+  factory AllCpusHistory([
+    void Function(AllCpusHistoryBuilder) updates,
+  ]) = _$AllCpusHistory;
 
-  factory PerCpuHistory.fromPerCpuHistoryValue({
-    required PerCpuHistoryValue value,
+  factory AllCpusHistory.fromAllCpusHistoryValue({
+    required AllCpusHistoryValue value,
   }) {
-    return PerCpuHistory(
+    return AllCpusHistory(
       (b) => b
         ..history = timeStampMapper<double>(
           map: value.history,
@@ -416,7 +521,7 @@ abstract class PerCpuHistory
   }
 }
 
-abstract class CpuLoad implements Built<CpuLoad, CpuLoadBuilder> {
+abstract class CpuLoad implements StreamModel, Built<CpuLoad, CpuLoadBuilder> {
   static Serializer<CpuLoad> get serializer => _$cpuLoadSerializer;
 
   double get min1;
@@ -428,7 +533,7 @@ abstract class CpuLoad implements Built<CpuLoad, CpuLoadBuilder> {
   @BuiltValueField(
     wireName: 'cpucore',
   )
-  int get cpuCoreCount;
+  int get cpuCoresCount;
 
   CpuLoad._();
 
@@ -456,15 +561,15 @@ abstract class CpuLoadHistoryValue
 }
 
 abstract class CpuLoadHistory
-    implements Built<CpuLoadHistory, CpuLoadHistoryBuilder> {
+    implements HistoryModel, Built<CpuLoadHistory, CpuLoadHistoryBuilder> {
   static Serializer<CpuLoadHistory> get serializer =>
       _$cpuLoadHistorySerializer;
 
-  BuiltList<TimeStamp<double>> get min1;
+  BuiltList<HistoryTimeStamp<double>> get min1;
 
-  BuiltList<TimeStamp<double>> get min5;
+  BuiltList<HistoryTimeStamp<double>> get min5;
 
-  BuiltList<TimeStamp<double>> get min15;
+  BuiltList<HistoryTimeStamp<double>> get min15;
 
   CpuLoadHistory._();
 
@@ -487,7 +592,7 @@ abstract class CpuLoadHistory
   }
 }
 
-abstract class DiskIo implements Built<DiskIo, DiskIoBuilder> {
+abstract class DiskIo implements Model, Built<DiskIo, DiskIoBuilder> {
   static Serializer<DiskIo> get serializer => _$diskIoSerializer;
 
   String get key;
@@ -529,9 +634,11 @@ abstract class DiskIo implements Built<DiskIo, DiskIoBuilder> {
   ]) = _$DiskIo;
 }
 
-abstract class DiskIoList implements Built<DiskIoList, DiskIoListBuilder> {
+abstract class DiskIoList
+    implements ModelList<DiskIo>, Built<DiskIoList, DiskIoListBuilder> {
   static Serializer<DiskIoList> get serializer => _$diskIoListSerializer;
 
+  @override
   BuiltList<DiskIo> get list;
 
   DiskIoList._();
@@ -581,10 +688,10 @@ abstract class DiskIoHistoryValue
 }
 
 abstract class DiskIoHistory
-    implements Built<DiskIoHistory, DiskIoHistoryBuilder> {
+    implements HistoryModel, Built<DiskIoHistory, DiskIoHistoryBuilder> {
   static Serializer<DiskIoHistory> get serializer => _$diskIoHistorySerializer;
 
-  BuiltMap<String, BuiltList<TimeStamp<int>>> get history;
+  BuiltMap<String, BuiltList<HistoryTimeStamp<int>>> get history;
 
   DiskIoHistory._();
 
@@ -604,7 +711,8 @@ abstract class DiskIoHistory
   }
 }
 
-abstract class FileSystem implements Built<FileSystem, FileSystemBuilder> {
+abstract class FileSystem
+    implements Model, Built<FileSystem, FileSystemBuilder> {
   static Serializer<FileSystem> get serializer => _$fileSystemSerializer;
 
   String get key;
@@ -640,10 +748,13 @@ abstract class FileSystem implements Built<FileSystem, FileSystemBuilder> {
 }
 
 abstract class FileSystemList
-    implements Built<FileSystemList, FileSystemListBuilder> {
+    implements
+        ModelList<FileSystem>,
+        Built<FileSystemList, FileSystemListBuilder> {
   static Serializer<FileSystemList> get serializer =>
       _$fileSystemListSerializer;
 
+  @override
   BuiltList<FileSystem> get list;
 
   FileSystemList._();
@@ -695,11 +806,13 @@ abstract class FileSystemHistoryValue
 }
 
 abstract class FileSystemHistory
-    implements Built<FileSystemHistory, FileSystemHistoryBuilder> {
+    implements
+        HistoryModel,
+        Built<FileSystemHistory, FileSystemHistoryBuilder> {
   static Serializer<FileSystemHistory> get serializer =>
       _$fileSystemHistorySerializer;
 
-  BuiltMap<String, BuiltList<TimeStamp<double>>> get history;
+  BuiltMap<String, BuiltList<HistoryTimeStamp<double>>> get history;
 
   FileSystemHistory._();
 
@@ -720,7 +833,7 @@ abstract class FileSystemHistory
 }
 
 abstract class InternetProtocol
-    implements Built<InternetProtocol, InternetProtocolBuilder> {
+    implements Model, Built<InternetProtocol, InternetProtocolBuilder> {
   static Serializer<InternetProtocol> get serializer =>
       _$internetProtocolSerializer;
 
@@ -742,7 +855,7 @@ abstract class InternetProtocol
   ]) = _$InternetProtocol;
 }
 
-abstract class Memory implements Built<Memory, MemoryBuilder> {
+abstract class Memory implements StreamModel, Built<Memory, MemoryBuilder> {
   static Serializer<Memory> get serializer => _$memorySerializer;
 
   int get total;
@@ -787,10 +900,10 @@ abstract class MemoryHistoryValue
 }
 
 abstract class MemoryHistory
-    implements Built<MemoryHistory, MemoryHistoryBuilder> {
+    implements HistoryModel, Built<MemoryHistory, MemoryHistoryBuilder> {
   static Serializer<MemoryHistory> get serializer => _$memoryHistorySerializer;
 
-  BuiltList<TimeStamp<double>> get percent;
+  BuiltList<HistoryTimeStamp<double>> get percent;
 
   MemoryHistory._();
 
@@ -809,7 +922,8 @@ abstract class MemoryHistory
   }
 }
 
-abstract class MemorySwap implements Built<MemorySwap, MemorySwapBuilder> {
+abstract class MemorySwap
+    implements StreamModel, Built<MemorySwap, MemorySwapBuilder> {
   static Serializer<MemorySwap> get serializer => _$memorySwapSerializer;
 
   int get total;
@@ -851,11 +965,13 @@ abstract class MemorySwapHistoryValue
 }
 
 abstract class MemorySwapHistory
-    implements Built<MemorySwapHistory, MemorySwapHistoryBuilder> {
+    implements
+        HistoryModel,
+        Built<MemorySwapHistory, MemorySwapHistoryBuilder> {
   static Serializer<MemorySwapHistory> get serializer =>
       _$memorySwapHistorySerializer;
 
-  BuiltList<TimeStamp<double>> get percent;
+  BuiltList<HistoryTimeStamp<double>> get percent;
 
   MemorySwapHistory._();
 
@@ -875,7 +991,7 @@ abstract class MemorySwapHistory
 }
 
 abstract class NetworkInterface
-    implements Built<NetworkInterface, NetworkInterfaceBuilder> {
+    implements Model, Built<NetworkInterface, NetworkInterfaceBuilder> {
   static Serializer<NetworkInterface> get serializer =>
       _$networkInterfaceSerializer;
 
@@ -929,10 +1045,13 @@ abstract class NetworkInterface
 }
 
 abstract class NetworkInterfaceList
-    implements Built<NetworkInterfaceList, NetworkInterfaceListBuilder> {
+    implements
+        ModelList<NetworkInterface>,
+        Built<NetworkInterfaceList, NetworkInterfaceListBuilder> {
   static Serializer<NetworkInterfaceList> get serializer =>
       _$networkInterfaceListSerializer;
 
+  @override
   BuiltList<NetworkInterface> get list;
 
   NetworkInterfaceList._();
@@ -984,11 +1103,11 @@ abstract class NetworkHistoryValue
 }
 
 abstract class NetworkHistory
-    implements Built<NetworkHistory, NetworkHistoryBuilder> {
+    implements HistoryModel, Built<NetworkHistory, NetworkHistoryBuilder> {
   static Serializer<NetworkHistory> get serializer =>
       _$networkHistorySerializer;
 
-  BuiltMap<String, BuiltList<TimeStamp<int>>> get history;
+  BuiltMap<String, BuiltList<HistoryTimeStamp<int>>> get history;
 
   NetworkHistory._();
 
@@ -1009,7 +1128,7 @@ abstract class NetworkHistory
 }
 
 abstract class ProcessCount
-    implements Built<ProcessCount, ProcessCountBuilder> {
+    implements StreamModel, Built<ProcessCount, ProcessCountBuilder> {
   static Serializer<ProcessCount> get serializer => _$processCountSerializer;
 
   int get total;
@@ -1054,17 +1173,19 @@ abstract class ProcessCountHistoryValue
 }
 
 abstract class ProcessCountHistory
-    implements Built<ProcessCountHistory, ProcessCountHistoryBuilder> {
+    implements
+        HistoryModel,
+        Built<ProcessCountHistory, ProcessCountHistoryBuilder> {
   static Serializer<ProcessCountHistory> get serializer =>
       _$processCountHistorySerializer;
 
-  BuiltList<TimeStamp<int>> get total;
+  BuiltList<HistoryTimeStamp<int>> get total;
 
-  BuiltList<TimeStamp<int>> get running;
+  BuiltList<HistoryTimeStamp<int>> get running;
 
-  BuiltList<TimeStamp<int>> get sleeping;
+  BuiltList<HistoryTimeStamp<int>> get sleeping;
 
-  BuiltList<TimeStamp<int>> get thread;
+  BuiltList<HistoryTimeStamp<int>> get thread;
 
   ProcessCountHistory._();
 
@@ -1088,7 +1209,7 @@ abstract class ProcessCountHistory
   }
 }
 
-abstract class Process implements Built<Process, ProcessBuilder> {
+abstract class Process implements Model, Built<Process, ProcessBuilder> {
   static Serializer<Process> get serializer => _$processSerializer;
 
   String get key;
@@ -1189,9 +1310,11 @@ abstract class Process implements Built<Process, ProcessBuilder> {
   factory Process([void Function(ProcessBuilder) updates]) = _$Process;
 }
 
-abstract class ProcessList implements Built<ProcessList, ProcessListBuilder> {
+abstract class ProcessList
+    implements ModelList<Process>, Built<ProcessList, ProcessListBuilder> {
   static Serializer<ProcessList> get serializer => _$processListSerializer;
 
+  @override
   BuiltList<Process> get list;
 
   ProcessList._();
@@ -1217,7 +1340,8 @@ abstract class ProcessList implements Built<ProcessList, ProcessListBuilder> {
   }
 }
 
-abstract class QuickLook implements Built<QuickLook, QuickLookBuilder> {
+abstract class QuickLook
+    implements StreamModel, Built<QuickLook, QuickLookBuilder> {
   static Serializer<QuickLook> get serializer => _$quickLookSerializer;
 
   double get cpu;
@@ -1225,9 +1349,12 @@ abstract class QuickLook implements Built<QuickLook, QuickLookBuilder> {
   @BuiltValueField(
     wireName: 'percpu',
   )
-  BuiltList<PerCpu> get perCpu;
+  BuiltList<AllCpus> get allCpus;
 
-  double get mem;
+  @BuiltValueField(
+    wireName: 'mem',
+  )
+  double get memory;
 
   double get swap;
 
@@ -1263,7 +1390,7 @@ abstract class QuickLookHistoryValue
   @BuiltValueField(
     wireName: 'percpu',
   )
-  BuiltList<BuiltList<JsonObject>> get perCpu;
+  BuiltList<BuiltList<JsonObject>> get allCpus;
 
   BuiltList<BuiltList<JsonObject>> get mem;
 
@@ -1276,59 +1403,57 @@ abstract class QuickLookHistoryValue
   ]) = _$QuickLookHistoryValue;
 }
 
-Iterable<MapEntry<DateTime, BuiltList<PerCpu>>>
-    mapEntryIterablePerCpuListJsonObject({
+Iterable<MapEntry<DateTime, BuiltList<AllCpus>>>
+    mapEntryIterableAllCpusListJsonObject({
   required BuiltList<BuiltList<JsonObject>> list,
 }) sync* {
   for (final perCpuHistoryTime in list) {
-    var iterator = perCpuHistoryTime.iterator;
-    var iterating = iterator.moveNext();
-    if (!iterating) {
+    final iterator = perCpuHistoryTime.iterator;
+    if (!iterator.moveNext()) {
       break;
     }
-    var dateTime = DateTime.parse(
+    final dateTime = DateTime.parse(
       iterator.current.asString,
     ).toUtc();
     iterator.moveNext();
-    BuiltList<PerCpu> perCpuList = BuiltList(
+    BuiltList<AllCpus> allCpusList = BuiltList(
       iterator.current.asList.map(
         (perCpu) => standardSerializers.deserializeWith(
-          PerCpu.serializer,
+          AllCpus.serializer,
           perCpu,
         )!,
       ),
     );
-    yield MapEntry<DateTime, BuiltList<PerCpu>>(
+    yield MapEntry<DateTime, BuiltList<AllCpus>>(
       dateTime,
-      perCpuList,
+      allCpusList,
     );
   }
 }
 
-MapBuilder<DateTime, BuiltList<PerCpu>> mapBuilderFromQuickLookPerCpuList({
+MapBuilder<DateTime, BuiltList<AllCpus>> mapBuilderFromQuickLookPerCpuList({
   required BuiltList<BuiltList<JsonObject>> list,
-}) {
-  var builder = BuiltMap<DateTime, BuiltList<PerCpu>>().toBuilder();
-  builder.addEntries(
-    mapEntryIterablePerCpuListJsonObject(
-      list: list,
-    ),
-  );
-  return builder;
-}
+}) =>
+    MapBuilder(
+      Map.fromEntries(
+        mapEntryIterableAllCpusListJsonObject(
+          list: list,
+        ),
+      ),
+    );
 
 abstract class QuickLookHistory
-    implements Built<QuickLookHistory, QuickLookHistoryBuilder> {
+    implements HistoryModel, Built<QuickLookHistory, QuickLookHistoryBuilder> {
   static Serializer<QuickLookHistory> get serializer =>
       _$quickLookHistorySerializer;
 
-  BuiltList<TimeStamp<double>> get cpu;
+  BuiltList<HistoryTimeStamp<double>> get cpu;
 
-  BuiltMap<DateTime, BuiltList<PerCpu>> get perCpu;
+  BuiltMap<DateTime, BuiltList<AllCpus>> get allCpus;
 
-  BuiltList<TimeStamp<double>> get mem;
+  BuiltList<HistoryTimeStamp<double>> get mem;
 
-  BuiltList<TimeStamp<double>> get swap;
+  BuiltList<HistoryTimeStamp<double>> get swap;
 
   QuickLookHistory._();
 
@@ -1342,7 +1467,7 @@ abstract class QuickLookHistory
     return QuickLookHistory(
       (b) => b
         ..cpu = timeStampListBuilderFromJsonObjectList<double>(list: value.cpu)
-        ..perCpu = mapBuilderFromQuickLookPerCpuList(list: value.perCpu)
+        ..allCpus = mapBuilderFromQuickLookPerCpuList(list: value.allCpus)
         ..mem = timeStampListBuilderFromJsonObjectList<double>(list: value.mem)
         ..swap =
             timeStampListBuilderFromJsonObjectList<double>(list: value.swap),
@@ -1350,7 +1475,7 @@ abstract class QuickLookHistory
   }
 }
 
-abstract class Sensor implements Built<Sensor, SensorBuilder> {
+abstract class Sensor implements Model, Built<Sensor, SensorBuilder> {
   static Serializer<Sensor> get serializer => _$sensorSerializer;
 
   String get key;
@@ -1374,9 +1499,11 @@ abstract class Sensor implements Built<Sensor, SensorBuilder> {
   ]) = _$Sensor;
 }
 
-abstract class SensorList implements Built<SensorList, SensorListBuilder> {
+abstract class SensorList
+    implements ModelList<Sensor>, Built<SensorList, SensorListBuilder> {
   static Serializer<SensorList> get serializer => _$sensorListSerializer;
 
+  @override
   BuiltList<Sensor> get list;
 
   SensorList._();
@@ -1402,7 +1529,7 @@ abstract class SensorList implements Built<SensorList, SensorListBuilder> {
   }
 }
 
-abstract class System implements Built<System, SystemBuilder> {
+abstract class System implements Model, Built<System, SystemBuilder> {
   static Serializer<System> get serializer => _$systemSerializer;
 
   @BuiltValueField(

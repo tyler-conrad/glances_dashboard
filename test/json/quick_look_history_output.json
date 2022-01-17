@@ -18,7 +18,7 @@
       "value": 3.1
     }
   ],
-  "perCpu": {
+  "allCpus": {
     "1637725439006141": [
       {
         "key": "cpu_number",

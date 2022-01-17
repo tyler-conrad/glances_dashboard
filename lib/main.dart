@@ -3,6 +3,8 @@ import 'package:yaru/yaru.dart' as yaru;
 
 import 'src/model.dart' as model;
 import 'src/client.dart' as client;
+import 'src/value_list_map_builder.dart' as vlmb;
+import 'src/chart.dart' as chart;
 
 void main() {
   m.runApp(
@@ -91,19 +93,18 @@ class _SystemState extends m.State<System>
     with
         m.SingleTickerProviderStateMixin,
         m.AutomaticKeepAliveClientMixin<System> {
-  static const double _cpuHertzGraphButtonInset = 32.0;
   static const double _frameOuterPadding = 16.0;
   static const double _frameInnerPadding = 16.0;
   static const double _frameBorderRadius = 4.0;
 
-  final m.ValueNotifier<bool> _cpuHertzGraphMaximized = m.ValueNotifier(false);
+  final m.ValueNotifier<bool> _chartMaximized = m.ValueNotifier(false);
 
   late final Stream<model.Now> nowStream;
   late final Stream<model.UpTime> upTimeStream;
 
-  late final m.AnimationController _cpuHertzGraphHeightController;
-  late final m.Animation _cpuHertzGraphTopAnimation;
-  late final m.Animation _cpuHertzGraphHeightAnimation;
+  late final m.AnimationController _chartHeightController;
+  late final m.Animation _chartTopAnimation;
+  late final m.Animation _chartHeightAnimation;
 
   @override
   bool get wantKeepAlive => true;
@@ -112,19 +113,19 @@ class _SystemState extends m.State<System>
   void initState() {
     super.initState();
 
-    _cpuHertzGraphHeightController = m.AnimationController(
+    _chartHeightController = m.AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
     );
 
-    _cpuHertzGraphTopAnimation = m.Tween(begin: 0.5, end: 0.0).animate(
+    _chartTopAnimation = m.Tween(begin: 0.5, end: 0.0).animate(
       m.CurvedAnimation(
-          parent: _cpuHertzGraphHeightController, curve: m.Curves.easeInOut),
+          parent: _chartHeightController, curve: m.Curves.easeInOut),
     );
 
-    _cpuHertzGraphHeightAnimation = m.Tween(begin: 0.5, end: 1.0).animate(
+    _chartHeightAnimation = m.Tween(begin: 0.5, end: 1.0).animate(
       m.CurvedAnimation(
-          parent: _cpuHertzGraphHeightController, curve: m.Curves.easeInOut),
+          parent: _chartHeightController, curve: m.Curves.easeInOut),
     )..addListener(
         () {
           setState(
@@ -133,14 +134,14 @@ class _SystemState extends m.State<System>
         },
       );
 
-    _cpuHertzGraphMaximized.addListener(
+    _chartMaximized.addListener(
       () {
-        if (_cpuHertzGraphMaximized.value) {
-          _cpuHertzGraphHeightController.forward(
-              from: _cpuHertzGraphHeightAnimation.value);
+        if (_chartMaximized.value) {
+          _chartHeightController.forward(
+              from: _chartHeightAnimation.value);
         } else {
-          _cpuHertzGraphHeightController.reverse(
-              from: _cpuHertzGraphHeightAnimation.value);
+          _chartHeightController.reverse(
+              from: _chartHeightAnimation.value);
         }
       },
     );
@@ -151,8 +152,8 @@ class _SystemState extends m.State<System>
 
   @override
   void dispose() {
-    _cpuHertzGraphHeightController.dispose();
-    _cpuHertzGraphMaximized.dispose();
+    _chartHeightController.dispose();
+    _chartMaximized.dispose();
     super.dispose();
   }
 
@@ -186,10 +187,10 @@ class _SystemState extends m.State<System>
   @override
   m.Widget build(m.BuildContext context) {
     super.build(context);
-    var theme = m.Theme.of(context);
+    final theme = m.Theme.of(context);
     return m.LayoutBuilder(
       builder: (context, constraints) {
-        var coreFuture = client.client.core();
+        final coresFuture = client.client.cores();
         return m.Stack(
           children: [
             m.Positioned(
@@ -257,19 +258,19 @@ class _SystemState extends m.State<System>
                                   children: [
                                     m.Expanded(
                                       flex: 1,
-                                      child: m.FutureBuilder<model.QuickLook>(
+                                      child: m.FutureBuilder<model.TimeStamp<model.QuickLook>>(
                                         future: client.client.quickLook(),
                                         builder: (context, snapshot) {
                                           return label(
-                                            'CPU Name: ${snapshot.hasData ? snapshot.data!.cpuName : ''}',
+                                            'CPU Name: ${snapshot.hasData ? snapshot.data!.model.cpuName : ''}',
                                           );
                                         },
                                       ),
                                     ),
                                     m.Expanded(
                                       flex: 1,
-                                      child: m.FutureBuilder<model.Core>(
-                                        future: coreFuture,
+                                      child: m.FutureBuilder<model.Cores>(
+                                        future: coresFuture,
                                         builder: (context, snapshot) => label(
                                           'Physical Cores: ${snapshot.hasData ? snapshot.data!.physical : ''}',
                                         ),
@@ -277,8 +278,8 @@ class _SystemState extends m.State<System>
                                     ),
                                     m.Expanded(
                                       flex: 1,
-                                      child: m.FutureBuilder<model.Core>(
-                                        future: coreFuture,
+                                      child: m.FutureBuilder<model.Cores>(
+                                        future: coresFuture,
                                         builder: (context, snapshot) => label(
                                           'Logical Cores: ${snapshot.hasData ? snapshot.data!.logical : ''}',
                                         ),
@@ -344,7 +345,7 @@ class _SystemState extends m.State<System>
                                 child: m.FutureBuilder<model.InternetProtocol>(
                                   future: client.client.internetProtocol(),
                                   builder: (context, snapshot) {
-                                    var hasData = snapshot.hasData;
+                                    final hasData = snapshot.hasData;
                                     return m.Column(
                                       children: [
                                         m.Expanded(
@@ -382,39 +383,17 @@ class _SystemState extends m.State<System>
               ),
             ),
             m.Positioned(
-              top: constraints.maxHeight * _cpuHertzGraphTopAnimation.value,
+              top: constraints.maxHeight * _chartTopAnimation.value,
               child: m.SizedBox(
-                  width: constraints.maxWidth,
-                  height: constraints.maxHeight *
-                      _cpuHertzGraphHeightAnimation.value,
-                  child: m.Stack(
-                    children: [
-                      m.Positioned.fill(
-                        child: m.Container(
-                          color: m.Colors.blue,
-                        ),
-                      ),
-                      m.Positioned(
-                        top: _cpuHertzGraphButtonInset,
-                        right: _cpuHertzGraphButtonInset,
-                        child: m.OutlinedButton(
-                          onPressed: () {
-                            _cpuHertzGraphMaximized.value =
-                                !_cpuHertzGraphMaximized.value;
-                          },
-                          child: m.ValueListenableBuilder(
-                            valueListenable: _cpuHertzGraphMaximized,
-                            builder: (_context, bool maximized, _child) {
-                              return m.Icon(maximized
-                                  ? m.Icons.maximize
-                                  : m.Icons.minimize);
-                            },
-                          ),
-                        ),
-                      )
-                    ],
-                  )),
-            )
+                width: constraints.maxWidth,
+                height:
+                    constraints.maxHeight * _chartHeightAnimation.value,
+                child: chart.Chart(
+                  valueFunc: vlmb.builder.quickLookMap,
+                  maximized: _chartMaximized,
+                ),
+              ),
+            ),
           ],
         );
       },
