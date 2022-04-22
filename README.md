@@ -99,8 +99,8 @@ flutter run -d linux
 ```
 
 Tested on:
-- Ubuntu 20.04.3 LTS
-- Flutter 2.10.0-0.1.pre • channel beta • https://github.com/flutter/flutter.git
-- Framework • revision 628f0e3f3a (6 days ago) • 2022-01-11 19:50:05 -0600
-- Engine • revision 63ca99584a
-- Tools • Dart 2.16.0 (build 2.16.0-134.1.beta) • DevTools 2.9.2
+ - Ubuntu 20.04.3 LTS
+ - Flutter 2.13.0-0.2.pre • channel beta • https://github.com/flutter/flutter.git
+ - Framework • revision 8662e22bac (2 days ago) • 2022-04-20 08:21:52 -0700
+ - Engine • revision 24a02fa5ee
+ - Tools • Dart 2.17.0 (build 2.17.0-266.5.beta) • DevTools 2.12.2
